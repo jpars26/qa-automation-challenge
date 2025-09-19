@@ -4,7 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "cypress run --browser chrome",
+    "test:api": "cypress run --browser chrome --spec 'cypress/e2e/api/*.cy.js'",
+    "test:ui": "cypress run --browser chrome --spec 'cypress/e2e/ui/*.cy.js'",
+    "test:all": "cypress run --browser chrome --spec 'cypress/e2e/api/*.cy.js,cypress/e2e/ui/*.cy.js'",
+    "open": "cypress open --e2e --browser chrome",
+    "lint": "echo \"(adicionar eslint/prettier se quiser)\" && exit 0"
   },
   "keywords": [],
   "author": "",

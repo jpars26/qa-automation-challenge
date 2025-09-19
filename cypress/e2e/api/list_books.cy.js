@@ -1,21 +1,26 @@
 // cypress/e2e/api/list_books.cy.js
+// Teste de API para listar livros e salvar os dois primeiros ISBNs
+
 describe("API - Listar livros e salvar 2 ISBNs", () => {
-  it("deve obter a lista de livros e armazenar 2 ISBNs no session.json", () => {
-    cy.request("GET", "/BookStore/v1/Books").then((res) => {
-      expect(res.status).to.eq(200);
-      expect(res.body).to.have.property("books");
-      expect(res.body.books).to.be.an("array").that.has.length.greaterThan(1);
+  it("deve buscar a lista de livros e guardar 2 ISBNs no session.json", () => {
+    // Faz a requisição para obter os livros
+    cy.request("GET", "/BookStore/v1/Books").then((response) => {
+      expect(response.status).to.eq(200);
+      expect(response.body).to.have.property("books");
+      expect(response.body.books).to.be.an("array").that.has.length.greaterThan(1);
 
-      const firstTwoIsbns = res.body.books.slice(0, 2).map((b) => b.isbn);
+      // Seleciona os dois primeiros ISBNs da lista
+      const doisPrimeirosIsbns = response.body.books.slice(0, 2).map((livro) => livro.isbn);
 
-      cy.readFile("cypress/fixtures/session.json").then((prev) => {
+      // Lê o arquivo de sessão e salva os ISBNs
+      cy.readFile("cypress/fixtures/session.json").then((dadosAntigos) => {
         cy.writeFile("cypress/fixtures/session.json", {
-          ...prev,
-          isbns: firstTwoIsbns,
+          ...dadosAntigos,
+          isbns: doisPrimeirosIsbns,
         });
       });
 
-      cy.log(`ISBNs selecionados: ${firstTwoIsbns.join(", ")}`);
+      cy.log(`ISBNs salvos: ${doisPrimeirosIsbns.join(", ")}`);
     });
   });
 });

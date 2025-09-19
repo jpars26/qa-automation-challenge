@@ -1,38 +1,25 @@
-
-// Import commands.js using ES2015 syntax:
+// Importa os comandos customizados do Cypress
 import './commands'
-// cypress/support/e2e.js
 
-// Ignore apenas erros de scripts de terceiros comuns (ads, analytics, etc.)
+// Este handler ignora erros comuns de scripts de terceiros (ads, analytics, etc.)
+// para evitar que falhas externas interrompam os testes da aplicação.
 Cypress.on('uncaught:exception', (err) => {
   const stack = (err.stack || '').toLowerCase();
   const msg = (err.message || '').toLowerCase();
 
+  // Verifica se o erro veio de algum script de terceiros conhecido
   const isThirdParty =
     /adplus|ad[-.]service|doubleclick|googletagmanager|google-analytics|gpt|clarity|hotjar|intercom|segment|sentry|gstatic|facebook|cdn/.test(
       stack + ' ' + msg
     );
-  // Ignora erros de terceiros (ads/analytics) para não quebrar o teste
-Cypress.on('uncaught:exception', (err) => {
-  const s = ((err && err.stack) || '' + (err && err.message) || '').toLowerCase();
-  if (/adplus|googletagmanager|google-analytics|doubleclick|clarity|hotjar|segment|script error|cross origin/.test(s)) {
-    return false;
-  }
-});
 
-// Remove banners/rodapé que às vezes cobrem o botão Submit
-Cypress.Commands.add('cleanOverlays', () => {
-  cy.get('body').then(($b) => {
-    $b.find('#fixedban, footer').remove();
-  });
-});
-  // "Script error" genérico do navegador
-  // também cobre mensagens genéricas de cross-origin
+  // Verifica se é um erro genérico de script ou de cross-origin
   const isCrossOrigin = msg.includes('script error') || msg.includes('cross origin');
 
+  // Se for erro de terceiros ou de cross-origin, ignora e não falha o teste
   if (isThirdParty || isCrossOrigin) {
-    return false; // não falha o teste por erro do app de terceiro
+    return false;
   }
 
-  // deixe falhar para erros reais da aplicação sob teste
+  // Para erros reais da aplicação, deixa o Cypress reportar normalmente
 });

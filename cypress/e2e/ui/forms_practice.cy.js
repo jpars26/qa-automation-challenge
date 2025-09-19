@@ -1,97 +1,121 @@
 // cypress/e2e/ui/forms_practice.cy.js
 
-// Geradores simples de dados
-function rand(max) { return Math.floor(Math.random() * max); }
-function randChoice(arr){ return arr[rand(arr.length)]; }
-function randName() {
-  const first = ["Ana","Bruno","Carla","Diego","Eva","Fabio","Gabi","Henrique","Iris","João","Karla","Leo","Marina","Nina","Otavio","Paula","Rafa","Sara","Teo","Vivi"];
-  const last  = ["Silva","Souza","Oliveira","Pereira","Costa","Santos","Almeida","Lima","Araujo","Mendes","Ferraz","Pinto","Barros","Moraes"];
-  return { first: randChoice(first), last: randChoice(last) };
+// Teste automatizado para o formulário de prática
+
+// Funções utilitárias para gerar dados aleatórios
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
 }
-function randEmail(f,l){ return `${f}.${l}.${Date.now()}@example.com`.toLowerCase(); }
-function randPhone(){ return String(9000000000 + rand(999999999)); } // 10 dígitos
+
+function getRandomItem(array) {
+  return array[getRandomInt(array.length)];
+}
+
+function generateRandomName() {
+  const firstNames = [
+    "Ana", "Bruno", "Carla", "Diego", "Eva", "Fabio", "Gabi", "Henrique", "Iris", "João",
+    "Karla", "Leo", "Marina", "Nina", "Otavio", "Paula", "Rafa", "Sara", "Teo", "Vivi"
+  ];
+  const lastNames = [
+    "Silva", "Souza", "Oliveira", "Pereira", "Costa", "Santos", "Almeida", "Lima",
+    "Araujo", "Mendes", "Ferraz", "Pinto", "Barros", "Moraes"
+  ];
+  return {
+    first: getRandomItem(firstNames),
+    last: getRandomItem(lastNames)
+  };
+}
+
+function generateRandomEmail(first, last) {
+  return `${first}.${last}.${Date.now()}@example.com`.toLowerCase();
+}
+
+function generateRandomPhone() {
+  return String(9000000000 + getRandomInt(999999999));
+}
 
 describe("Frontend - Practice Form (Forms > Practice Form)", () => {
   beforeEach(() => {
-    // Stubs para scripts de terceiros que atrapalham o load
-    const tp = [
+    // Intercepta scripts de terceiros para evitar lentidão ou travamentos
+    const thirdPartyPatterns = [
       /cdn\.ad\.plus/i, /googletagmanager\.com/i, /google-analytics\.com/i,
       /doubleclick\.net/i, /clarity\.ms/i, /static\.hotjar\.com/i, /script\.hotjar\.com/i,
       /connect\.facebook\.net/i, /cdn\.segment\.com/i
     ];
-    tp.forEach((url) => cy.intercept({ method: "GET", url }, { statusCode: 204, body: "" }));
+    thirdPartyPatterns.forEach((pattern) => {
+      cy.intercept({ method: "GET", url: pattern }, { statusCode: 204, body: "" });
+    });
 
+    // Acessa a página inicial
     cy.visit("/");
-   
   });
 
-  it("deve preencher e submeter o Practice Form, abrir e fechar o popup", () => {
-    // 1) Home -> clicar no card "Forms"
+  it("deve preencher e submeter o formulário de prática, validar o popup e fechar", () => {
+    // Passo 1: Navegar até o card "Forms"
     cy.contains(".card-body h5", "Forms", { matchCase: false, timeout: 30000 })
       .scrollIntoView()
       .click();
 
-    // 2) Na página de Forms -> submenu "Practice Form"
+    // Passo 2: Selecionar o submenu "Practice Form"
     cy.contains("span", "Practice Form", { matchCase: false, timeout: 30000 }).click();
 
-    // Garante que estamos na Practice Form
+    // Confirma que está na página correta
     cy.url().should("include", "/automation-practice-form");
 
-    // 3) Preencher o formulário
-    const { first, last } = randName();
-    const email = randEmail(first, last);
-    const phone = randPhone();
+    // Passo 3: Preencher o formulário com dados aleatórios
+    const { first, last } = generateRandomName();
+    const email = generateRandomEmail(first, last);
+    const phone = generateRandomPhone();
 
     cy.get("#firstName").type(first);
     cy.get("#lastName").type(last);
     cy.get("#userEmail").type(email);
 
-    // Gender (clica no label, não no input escondido)
-    cy.contains("label", randChoice(["Male","Female","Other"])).click();
+    // Seleciona gênero aleatório
+    cy.contains("label", getRandomItem(["Male", "Female", "Other"])).click();
 
     cy.get("#userNumber").type(phone);
 
-    // Data de Nascimento: abre o datepicker e escolhe uma data fixa (mais estável)
+    // Seleciona data de nascimento fixa para estabilidade do teste
     cy.get("#dateOfBirthInput").click();
-    cy.get(".react-datepicker__month-select").select("May");    // Maio
+    cy.get(".react-datepicker__month-select").select("May");
     cy.get(".react-datepicker__year-select").select("1995");
     cy.get(".react-datepicker__day--015:not(.react-datepicker__day--outside-month)").click();
 
-    // Subjects (autocomplete): adiciona 2
+    // Adiciona duas matérias
     cy.get("#subjectsInput").type("Maths{enter}");
     cy.get("#subjectsInput").type("English{enter}");
 
-    // Hobbies
-    ["Sports","Reading","Music"].forEach(h => {
-      if (Math.random() > 0.5) cy.contains("label", h).click();
+    // Seleciona hobbies aleatórios
+    ["Sports", "Reading", "Music"].forEach(hobby => {
+      if (Math.random() > 0.5) cy.contains("label", hobby).click();
     });
 
-    // Upload de arquivo .txt da pasta fixtures
+    // Faz upload de arquivo de exemplo
     cy.get("#uploadPicture").selectFile("cypress/fixtures/upload/sample.txt", { force: true });
 
-    // Endereço
+    // Preenche endereço
     cy.get("#currentAddress").type("Rua das Flores, 123 - Centro");
 
-    // State & City (react-select): usar input interno
+    // Seleciona estado e cidade
     cy.get("#state").click();
     cy.get("#react-select-3-input").type("NCR{enter}");
-
     cy.get("#city").click();
     cy.get("#react-select-4-input").type("Delhi{enter}");
 
-    // 4) Submeter
+    // Passo 4: Submete o formulário
     cy.scrollTo("bottom");
     cy.contains("button", "Submit").click({ force: true });
 
-    // 5) Garantir popup aberto
+    // Passo 5: Valida que o popup foi aberto
     cy.get(".modal-content", { timeout: 15000 }).should("be.visible");
     cy.contains("#example-modal-sizes-title-lg", "Thanks for submitting the form").should("be.visible");
 
-    // (opcional) validar alguns campos renderizados na tabela
+    // Valida alguns dados no popup
     cy.contains("td", `${first} ${last}`).should("be.visible");
     cy.contains("td", email).should("be.visible");
 
-    // 6) Fechar popup
+    // Passo 6: Fecha o popup
     cy.get("#closeLargeModal").click();
     cy.get(".modal-content").should("not.exist");
   });

@@ -3,7 +3,7 @@ describe("API - Gerar token e checar autorização", () => {
   let account = null;
 
   before(() => {
-    // Lê dados salvos no passo anterior
+    // Lê dados salvos no create_user.cy.js
     cy.readFile("cypress/fixtures/session.json").then((data) => {
       account = data; // { userName, password, userID }
     });
