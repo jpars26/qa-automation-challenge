@@ -1,24 +1,17 @@
 {
   "name": "qa-automation-challenge",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "cypress run --browser chrome",
-    "test:api": "cypress run --browser chrome --spec 'cypress/e2e/api/*.cy.js'",
-    "test:ui": "cypress run --browser chrome --spec 'cypress/e2e/ui/*.cy.js'",
-    "test:all": "cypress run --browser chrome --spec 'cypress/e2e/api/*.cy.js,cypress/e2e/ui/*.cy.js'",
-    "open": "cypress open --e2e --browser chrome",
-    "lint": "echo \"(adicionar eslint/prettier se quiser)\" && exit 0"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "type": "commonjs",
+  "scripts": {
+    "open": "cypress open --e2e --browser chrome",
+    "test:all": "cypress run --browser chrome",
+    "test:bdd": "cypress run --browser chrome --spec \"cypress/e2e/**/*.feature\"",
+    "test:cy": "cypress run --browser chrome --spec \"cypress/e2e/**/*.cy.js\""
+  },
   "devDependencies": {
-    "@badeball/cypress-cucumber-preprocessor": "^23.1.0",
-    "@bahmutov/cypress-esbuild-preprocessor": "^2.2.6",
-    "cypress": "^15.2.0"
+    "@badeball/cypress-cucumber-preprocessor": "23.1.0",
+    "@bahmutov/cypress-esbuild-preprocessor": "2.2.6",
+    "cypress": "15.2.0"
   },
   "overrides": {
     "tsx": "4.7.1"
