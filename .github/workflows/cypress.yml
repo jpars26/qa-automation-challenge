@@ -1,3 +1,4 @@
+# .github/workflows/ci.yml
 name: Cypress Tests
 
 on:
@@ -11,23 +12,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout código
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Instalar Node.js
+      - name: Setup Node 20
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: 20
+          cache: npm
 
-      - name: Instalar dependências
+      - name: Install deps
         run: npm ci
 
-      - name: Rodar testes Cypress
-        run: npm run test:all
+      - name: Run Cypress (all)
+        uses: cypress-io/github-action@v6
+        with:
+          browser: chrome
+          command: npm run test:all
 
-      - name: Salvar screenshots e vídeos (se houver falha)
+      - name: Upload screenshots (if fail)
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: cypress-artifacts
-          path: cypress/screenshots/
+          name: cypress-screenshots
+          path: cypress/screenshots
+
+      - name: Upload videos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-videos
+          path: cypress/videos
