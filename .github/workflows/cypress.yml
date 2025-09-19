@@ -11,36 +11,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout código
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Instalar Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: "npm"
+          node-version: '18'
 
-      - name: Install deps
+      - name: Instalar dependências
         run: npm ci
 
-      # Executa Cypress (pega .cy.js e .feature via specPattern)
-      - name: Run Cypress (all)
-        uses: cypress-io/github-action@v6
-        with:
-          browser: chrome
-          command: npm run test:all
+      - name: Rodar testes Cypress
+        run: npm run test:all
 
-      # Artefatos para debug
-      - name: Upload screenshots
+      - name: Salvar screenshots e vídeos (se houver falha)
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: cypress-screenshots
-          path: cypress/screenshots
-
-      - name: Upload videos
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: cypress-videos
-          path: cypress/videos
+          name: cypress-artifacts
+          path: cypress/screenshots/
