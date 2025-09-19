@@ -1,5 +1,11 @@
 # QA Automation Challenge
 
+![Cypress](https://img.shields.io/badge/Cypress-15.2.0-17202C?logo=cypress)
+![Node.js](https://img.shields.io/badge/Node.js-18.x-339933?logo=node.js)
+![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-F7DF1E?logo=javascript&logoColor=black)
+![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-Automated-2088FF?logo=github-actions&logoColor=white)
+![Cucumber](https://img.shields.io/badge/CucumberJS-Enabled-23D96C?logo=cucumber&logoColor=white)
+
 Este projeto contém automações de testes UI e API utilizando [Cypress](https://www.cypress.io/).  
 O objetivo é validar funcionalidades do site [DemoQA](https://demoqa.com/) e garantir a qualidade das principais features.
 
