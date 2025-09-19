@@ -6,7 +6,8 @@
     "open": "cypress open --e2e --browser chrome",
     "test:all": "cypress run --browser chrome",
     "test:bdd": "cypress run --browser chrome --spec \"cypress/e2e/**/*.feature\"",
-    "test:cy": "cypress run --browser chrome --spec \"cypress/e2e/**/*.cy.js\""
+    "test:cy": "cypress run --browser chrome --spec \"cypress/e2e/**/*.cy.js\"",
+    "test:smoke": "cypress run --browser chrome --spec \"cypress/e2e/api/*.cy.js,cypress/e2e/ui/forms_practice.cy.js,cypress/e2e/ui/browser_windows.cy.js,cypress/e2e/ui/**/*.feature\""
   },
   "devDependencies": {
     "@badeball/cypress-cucumber-preprocessor": "23.1.0",
