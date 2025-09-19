@@ -23,7 +23,7 @@ jobs:
         run: npm ci
 
       - name: Rodar testes Cypress
-        run: npm run test
+        run: npm run test:all
 
       - name: Salvar screenshots e vídeos (se houver falha)
         if: failure()
