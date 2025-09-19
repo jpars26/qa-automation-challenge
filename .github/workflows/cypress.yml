@@ -26,7 +26,7 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           browser: chrome
-          command: npm run test:smoke
+          command: npm run test:all
 
       - name: Upload screenshots (if fail)
         if: failure()
